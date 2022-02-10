@@ -23,5 +23,5 @@ const popupCenter = ({url, title, w, h}) => {
 }
 
 const loginIt = () => {
-    popupCenter({url: '/auth.html', title: 'Authenticate', w: 520, h: 570}); 
+    popupCenter({url: '/auth', title: 'Authenticate', w: 520, h: 570}); 
 }

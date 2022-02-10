@@ -25,6 +25,20 @@ body {
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
 }
 
+.error {
+  color: red;
+  font-family: sans-serif;
+}
+
+#nouser form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
 input {
   height: 40px;
   width: 100%;
