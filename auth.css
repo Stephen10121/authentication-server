@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "George-Italic";
+  src: url(fonts/Louis-George-Cafe-Italic.ttf);
+}
+
 body {
   width: 100vw;
   height: 100vh;
@@ -7,7 +12,7 @@ body {
   background-color: #f0f0f0;
 }
 
-form {
+#nouser {
   width: 70%;
   height: 70%;
   display: flex;
@@ -27,6 +32,7 @@ input {
   border-bottom-right-radius: 5px;
   border-top-right-radius: 5px;
   padding: 0 10px;
+  font-family: "George-Italic", sans-serif;
 }
 
 .label {
@@ -51,15 +57,44 @@ input {
   height: 100%;
 }
 
-button {
+#nouser button {
   width: 90%;
   height: 40px;
   background-color: rgb(134, 255, 134);
   border: none;
   border-radius: 100vw;
   cursor: pointer;
+  font-family: "George-Italic", sans-serif;
 }
 
 button:hover {
   outline: 2px solid rgb(134, 255, 134);
+}
+
+#nouser {
+  display: none;
+}
+
+#isuser {
+  display: flex;
+  width: 70%;
+  height: 70%;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+}
+
+#isuser button {
+  width: 90%;
+  padding: 10px;
+  background-color: rgb(134, 255, 134);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: "George-Italic", sans-serif;
 }

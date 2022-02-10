@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="auth.css">
     <title>Auth</title>
+    <script src="auth.js" defer></script>
 </head>
 <body>
-    <form action="#">
+    <div id="nouser">
         <div class="label">
             <div class="iconpart"><img src="/icons/person-fill.svg" alt="Person"></div>
             <input type="text" id="username" placeholder="Username">
@@ -20,6 +21,12 @@
             <input type="password" placeholder="Password">
         </div>
         <button>Login</button>
-    </form>
+        <button onclick="currentUser()">Login to existing account</button>
+    </div>
+    <div class="exists" id="isuser">
+        <button>Jeff Bezos</button>
+        <button>Stephen Gruzin</button>
+        <button onclick="newUser()">Login to new account</button>
+    </div>
 </body>
 </html>
