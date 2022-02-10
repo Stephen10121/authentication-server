@@ -1,5 +1,5 @@
 {
-  "name": "new-portfolio",
+  "name": "authentication-server",
   "version": "1.0.0",
   "description": "",
   "main": "authServer.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Stephen10121/new-portfolio.git"
+    "url": "git+https://github.com/Stephen10121/authentication-server.git"
   },
   "keywords": [],
   "author": "Stephen Gruzin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Stephen10121/new-portfolio/issues"
+    "url": "https://github.com/Stephen10121/authentication-server/issues"
   },
-  "homepage": "https://github.com/Stephen10121/new-portfolio#readme",
+  "homepage": "https://github.com/Stephen10121/authentication-server#readme",
   "devDependencies": {
     "nodemon": "^2.0.15"
   }
