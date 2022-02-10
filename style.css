@@ -1,0 +1,42 @@
+@font-face {
+  font-family: "George";
+  src: url(fonts/Louis-George-Cafe.ttf);
+}
+@font-face {
+  font-family: "George-Bold";
+  src: url(fonts/Louis-George-Cafe-Bold.ttf);
+}
+@font-face {
+  font-family: "George-Italic";
+  src: url(fonts/Louis-George-Cafe-Italic.ttf);
+}
+
+:root {
+  --background-color: #f3f3f3;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#sauth-login {
+  width: 200px;
+  font-family: "George-Italic", sans-serif;
+  border-radius: 100vw;
+  border: none;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  height: 50px;
+  cursor: pointer;
+  transition: box-shadow 0.25s linear;
+}
+
+#sauth-login:hover {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 8px 8px;
+}
