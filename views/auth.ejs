@@ -29,6 +29,7 @@
         <button onclick="currentUser()">Login to existing account</button>
     </div>
     <div class="exists" id="isuser">
+        <p id="error2cool" class="error hide"></p>
         <% if(locals.userName) {%>
             <button onclick="sendAuth()"><%= userName %></button>
         <% } %>

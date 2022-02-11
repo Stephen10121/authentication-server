@@ -1,4 +1,5 @@
 const errorMessage = document.getElementById("signuperror");
+const errorM2 = document.getElementById('error2cool');
 
 const newUser = () => {
     document.getElementById("isuser").style.display = "none";
@@ -37,11 +38,17 @@ const sendAuth = () => {
             return;
         }
         if (res.data.error) {
-            console.log(res.data.error);
+            console.log(res.data.error, res.data.errorMessage);
             alert("error. check console.");
             return;
         }
-        alert('success');
+        errorMessage.innerText = "Success";
+        errorMessage.classList.remove("hide");
+        errorM2.innerText = "Success";
+        errorM2.classList.remove("hide");
+        setTimeout(() => {
+            window.close();
+        }, 500);
       })
       .catch(function (error) {
         console.log(error);

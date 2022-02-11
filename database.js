@@ -131,5 +131,6 @@ async function getUserData(user) {
 module.exports = {
     signup,
     userLogin,
-    getUserData
+    getUserData,
+    getUser2
 }

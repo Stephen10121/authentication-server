@@ -1,6 +1,6 @@
 const http = require("http");
 const express = require('express');
-const { signup, userLogin, getUserData } = require("./database");
+const { signup, userLogin, getUserData, getUser2 } = require("./database");
 const { sendRequest } = require("./functions");
 const cookieParser = require('cookie-parser');
 const PORT = 5400;
@@ -21,6 +21,10 @@ const server = http.createServer(app);
 app.get('/', (req, res) => res.render('index'));
 app.get("/auth", async (req, res) => {
     if (req.cookies["G_VAR"]) {
+        const userif = await getUser2(req.cookies["G_VAR"]);
+        if (userif.length == 0) {
+            return res.clearCookie("key").render("auth");
+        }
         const user = await getUserData(req.cookies["G_VAR"]);
         return res.render('auth', {userName:user.usersRName});
     }
@@ -28,12 +32,14 @@ app.get("/auth", async (req, res) => {
 });
 
 app.post("/auth", async (req, res) => {
-    console.log(req.body);
-    // const queryObject = url.parse(req.url, true).query;
-    // if (!queryObject.website || !queryObject.key) {
-    //     return res.json({error: true, errorMessage: "Missing parameters."});
-    // }
-    // sendRequest(queryObject.website, {key: queryObject.key});
+    if (!req.body.userData.website || !req.body.userData.key || !req.body.userData.cookie) {
+        return res.json({error: true, errorMessage: "Missing parameters."});
+    }
+    const userif = await getUser2(req.body.userData.cookie);
+    if (userif.length == 0) {
+        return res.json({error: true, errorMessage: "Invalid cookie."});
+    }
+    sendRequest(req.body.userData.website, req.body.userData.key, req.body.userData.cookie);
     res.json({msg: 'good'});
 });
 
