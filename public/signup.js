@@ -9,10 +9,9 @@ document.getElementById("nouser").addEventListener("submit", (e) => {
             rname: e.target[0].value,
             email: e.target[1].value,
             username: e.target[2].value,
-            phone: e.target[3].value,
-            password: e.target[4].value,
-            rpassword: e.target[5].value,
-            twofa: e.target[6].checked
+            password: e.target[3].value,
+            rpassword: e.target[4].value,
+            twofa: e.target[5].checked
         }
     } catch (error) {
         errorMessage.innerText = "An error occured. Please refresh.";

@@ -30,7 +30,7 @@
     </div>
     <div class="exists" id="isuser">
         <% if(locals.userName) {%>
-            <button><%= userName %></button>
+            <button onclick="sendAuth()"><%= userName %></button>
         <% } %>
         <button onclick="newUser()">Login to new account</button>
     </div>
