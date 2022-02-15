@@ -24,10 +24,11 @@ const createNewHash = () => {
     return hash;
 }
 
-const sendRequest = async (website, key, cookie) => {
+const sendRequest = async (website, key, cookie, getOtherWebsiteKey) => {
+    const userData = await getOtherWebsiteKey(website, cookie);
     var clientServerOptions = {
         uri: website,
-        body: JSON.stringify({data: encrypt(website, key, cookie)}),
+        body: JSON.stringify({data: userData}),
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -35,7 +36,7 @@ const sendRequest = async (website, key, cookie) => {
     }
     request(clientServerOptions, (error, response) => {
         if (error) {
-            console.log(error);
+            return "error";
         }
         return;
     });

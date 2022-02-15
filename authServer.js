@@ -1,6 +1,6 @@
 const http = require("http");
 const express = require('express');
-const { signup, userLogin, getUserData, getUser2 } = require("./database");
+const { signup, userLogin, getUserData, getUser2, getOtherWebsiteKey } = require("./database");
 const { sendRequest } = require("./functions");
 const cookieParser = require('cookie-parser');
 const PORT = 5400;
@@ -39,8 +39,11 @@ app.post("/auth", async (req, res) => {
     if (userif.length == 0) {
         return res.json({error: true, errorMessage: "Invalid cookie."});
     }
-    sendRequest(req.body.userData.website, req.body.userData.key, req.body.userData.cookie);
-    res.json({msg: 'good'});
+    if (await sendRequest(req.body.userData.website, req.body.userData.key, req.body.userData.cookie, getOtherWebsiteKey)==="error") {
+        return res.json({error: true, errorMessage: "Invalid URL."});
+    } else {
+        res.json({msg: 'good'});
+    }
 });
 
 app.get("/signup", (req, res) => res.render('signup'));

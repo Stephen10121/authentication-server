@@ -20,6 +20,24 @@ async function createTable() {
         console.error(error.message);
     } finally {
         await db.close();
+        createOtherTable();
+        return 200;
+    }
+}
+
+async function createOtherTable() {
+    const db = await Database.open("./users.db");
+    try {
+        await db.run(`CREATE TABLE sites (
+            id INTEGER PRIMARY KEY,
+            sitesOwner varchar(200) NOT NULL,
+            sitesWebsite varchar(200) NOT NULL,
+            sitesHash varchar(300) NOT NULL
+        )`);
+    } catch (error) {
+        console.error(error.message);
+    } finally {
+        await db.close();
         return 200;
     }
 }
@@ -36,6 +54,14 @@ async function getUser2(user) {
     const db = await Database.open("./users.db");
     let sql = "SELECT * FROM USERS WHERE usersHash=?";
     const result = await db.all(sql, [user]);
+    await db.close();
+    return result;
+}
+
+async function getSites(id, website) {
+    const db = await Database.open("./users.db");
+    let sql = "SELECT * FROM sites WHERE sitesOwner=? AND sitesWebsite=?";
+    const result = await db.all(sql, [id, website]);
     await db.close();
     return result;
 }
@@ -74,6 +100,20 @@ async function addUser(name, rName, email, password, twoFA, phone) {
     
     try {
         const result = db.run(insertStatement, [name, rName, email, password, twoFA, phone, createNewHash()]);
+        await db.close();
+        return result;
+    } catch (err) {
+        console.error(err);
+        return 'error';
+    }
+}
+
+async function addSite(owner, website) {
+    const db = await Database.open("./users.db");
+    const insertStatement = "INSERT INTO sites (sitesOwner, sitesWebsite, sitesHash) VALUES (?, ?, ?)";
+    
+    try {
+        const result = db.run(insertStatement, [owner, website, hashed(hashed(owner.toString())+hashed(website))]);
         await db.close();
         return result;
     } catch (err) {
@@ -125,6 +165,19 @@ async function getUserData(user) {
     return users[0];
 }
 
+async function getOtherWebsiteKey(website, cookie) {
+    const gotUserData = await getUser2(cookie);
+    if (gotUserData.length < 1) {
+        return "User doesnt exist";
+    }
+    let userSites = await getSites(gotUserData[0].id, website);
+    if (userSites.length === 0) {
+        await addSite(gotUserData[0].id, website);
+        userSites = await getSites(gotUserData[0].id, website);
+    }
+    return userSites[0].sitesHash;
+}
+
 //createTable().then(data=>console.log(data));
 
 
@@ -132,5 +185,6 @@ module.exports = {
     signup,
     userLogin,
     getUserData,
-    getUser2
+    getUser2,
+    getOtherWebsiteKey
 }
