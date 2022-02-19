@@ -1,22 +1,37 @@
 const http = require("http");
 const express = require('express');
 const { signup, userLogin, getUserData, getUser2, getOtherWebsiteKey } = require("./database");
-const { sendRequest } = require("./functions");
+const { sendRequest, getKey } = require("./functions");
 const cookieParser = require('cookie-parser');
+const socketio = require('socket.io');
+const rateLimit = require('express-rate-limit');
 const PORT = 5400;
 const app = express();
 const url = require("url");
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', "http://127.0.0.1:5400/");
+    res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Headers', '*');
     next();
 });
 
+const limiter = rateLimit({
+	windowMs: 1 * 60 * 1000, // 1 minute
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
 app.set('view engine', 'ejs');
-app.use(cookieParser(), express.json(), express.static('public'), express.urlencoded({ extended: true }));
+app.use(limiter, cookieParser(), express.json(), express.static('public'), express.urlencoded({ extended: true }));
 
 const server = http.createServer(app);
+const io = socketio(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST']
+    }
+});
 
 app.get('/', (req, res) => res.render('index'));
 app.get("/auth", async (req, res) => {
@@ -42,6 +57,12 @@ app.post("/auth", async (req, res) => {
     if (await sendRequest(req.body.userData.website, req.body.userData.key, req.body.userData.cookie, getOtherWebsiteKey)==="error") {
         return res.json({error: true, errorMessage: "Invalid URL."});
     } else {
+        try {
+            io.to(req.body.userData.key).emit('data', await getKey(req.body.userData.website, req.body.userData.cookie, getOtherWebsiteKey));
+        } catch (err) {
+            console.log(err);
+            return res.json({error: true, errorMessage: "Invalid key"});
+        }
         res.json({msg: 'good'});
     }
 });
@@ -80,6 +101,10 @@ app.post("/signup", async (req, res) => {
         return res.json({error: true, errorMessage: result.errorMessage});
     }
     return res.cookie("G_VAR", result.key, { maxAge: 990000000}).json({error: false});
-})
+});
+
+io.on('connection', socket => {
+    socket.emit("test", 200);
+});
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}.`));

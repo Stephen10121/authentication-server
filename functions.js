@@ -1,4 +1,5 @@
 const { createHash, randomBytes, createCipheriv } = require("crypto");
+const { use } = require("express/lib/application");
 const request = require('request');
 
 const encrypt = (iv2, key, data) => {
@@ -28,7 +29,7 @@ const sendRequest = async (website, key, cookie, getOtherWebsiteKey) => {
     const userData = await getOtherWebsiteKey(website, cookie);
     var clientServerOptions = {
         uri: website,
-        body: JSON.stringify({data: userData}),
+        body: JSON.stringify({data: userData, key}),
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -42,8 +43,18 @@ const sendRequest = async (website, key, cookie, getOtherWebsiteKey) => {
     });
 }
 
+const getKey = async (website, cookie, getOtherWebsiteKey) => {
+    const userData = await getOtherWebsiteKey(website, cookie);
+    if (userData === "User doesnt exist") {
+        return 404;
+    } else {
+        return userData;
+    }
+}
+
 module.exports = {
     hashed,
     sendRequest,
-    createNewHash
+    createNewHash,
+    getKey
 }
