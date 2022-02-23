@@ -161,12 +161,12 @@ async function userLogin(username, password) {
 }
 
 async function getUserData(user) {
-    const users = await getUser2(user);
+    const users = await getUser(user);
     return users[0];
 }
 
 async function getOtherWebsiteKey(website, cookie) {
-    const gotUserData = await getUser2(cookie);
+    const gotUserData = await getUser(cookie);
     if (gotUserData.length < 1) {
         return "User doesnt exist";
     }
@@ -185,6 +185,6 @@ module.exports = {
     signup,
     userLogin,
     getUserData,
-    getUser2,
+    getUser,
     getOtherWebsiteKey
 }

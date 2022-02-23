@@ -46,9 +46,7 @@ const sendAuth = () => {
         errorMessage.classList.remove("hide");
         errorM2.innerText = "Success";
         errorM2.classList.remove("hide");
-        setTimeout(() => {
-            window.close();
-        }, 500);
+        window.close();
       })
       .catch(function (error) {
         console.log(error);

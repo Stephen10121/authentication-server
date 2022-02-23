@@ -1,6 +1,7 @@
+require('dotenv').config();
 const http = require("http");
 const express = require('express');
-const { signup, userLogin, getUserData, getUser2, getOtherWebsiteKey } = require("./database");
+const { signup, userLogin, getUserData, getUser, getOtherWebsiteKey } = require("./database");
 const { sendRequest, getKey } = require("./functions");
 const cookieParser = require('cookie-parser');
 const socketio = require('socket.io');
@@ -8,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const PORT = 5400;
 const app = express();
 const url = require("url");
+const jwt = require('jsonwebtoken');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', "*");
@@ -36,12 +38,19 @@ const io = socketio(server, {
 app.get('/', (req, res) => res.render('index'));
 app.get("/auth", async (req, res) => {
     if (req.cookies["G_VAR"]) {
-        const userif = await getUser2(req.cookies["G_VAR"]);
-        if (userif.length == 0) {
-            return res.clearCookie("key").render("auth");
-        }
-        const user = await getUserData(req.cookies["G_VAR"]);
-        return res.render('auth', {userName:user.usersRName});
+        jwt.verify(req.cookies["G_VAR"], process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+            if (err) {
+                return res.clearCookie("G_VAR").render("auth");
+            }
+
+            const userif = await getUser(user);
+            if (userif.length == 0) {
+                return res.clearCookie("key").render("auth");
+            }
+            const user2 = await getUserData(user);
+            return res.render('auth', {userName:user2.usersRName});
+        });
+        return;
     }
     res.render("auth");
 });
@@ -50,21 +59,27 @@ app.post("/auth", async (req, res) => {
     if (!req.body.userData.website || !req.body.userData.key || !req.body.userData.cookie) {
         return res.json({error: true, errorMessage: "Missing parameters."});
     }
-    const userif = await getUser2(req.body.userData.cookie);
-    if (userif.length == 0) {
-        return res.json({error: true, errorMessage: "Invalid cookie."});
-    }
-    if (await sendRequest(req.body.userData.website, req.body.userData.key, req.body.userData.cookie, getOtherWebsiteKey)==="error") {
-        return res.json({error: true, errorMessage: "Invalid URL."});
-    } else {
-        try {
-            io.to(req.body.userData.key).emit('data', await getKey(req.body.userData.website, req.body.userData.cookie, getOtherWebsiteKey));
-        } catch (err) {
-            console.log(err);
-            return res.json({error: true, errorMessage: "Invalid key"});
+    jwt.verify(req.body.userData.cookie, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+        if (err) {
+            return res.json({error: true, errorMessage: "Invalid token."});
         }
-        res.json({msg: 'good'});
-    }
+        const userif = await getUser(user);
+
+        if (userif.length == 0) {
+            return res.json({error: true, errorMessage: "Invalid token."});
+        }
+        if (await sendRequest(req.body.userData.website, req.body.userData.key, user, getOtherWebsiteKey)==="error") {
+            return res.json({error: true, errorMessage: "Invalid URL."});
+        } else {
+            try {
+                io.to(req.body.userData.key).emit('data', await getKey(req.body.userData.website, user, getOtherWebsiteKey));
+            } catch (err) {
+                console.log(err);
+                return res.json({error: true, errorMessage: "Invalid key"});
+            }
+            res.json({msg: 'good'});
+        }
+    });
 });
 
 app.get("/signup", (req, res) => res.render('signup'));
@@ -81,7 +96,8 @@ app.post("/login", async (req, res) => {
     if (result.error != 200) {
         return res.json({error: true, errorMessage: result.errorMessage});
     }
-    return res.cookie("G_VAR", result.hash, { maxAge: 990000000}).json({error: false});
+    const accessToken = jwt.sign(data.username, process.env.ACCESS_TOKEN_SECRET);
+    return res.cookie("G_VAR", accessToken, { maxAge: 990000000}).json({error: false});
 });
 
 app.post("/signup", async (req, res) => {
