@@ -116,7 +116,8 @@ app.post("/signup", async (req, res) => {
     if (result.error !== 200) {
         return res.json({error: true, errorMessage: result.errorMessage});
     }
-    return res.cookie("G_VAR", result.key, { maxAge: 990000000}).json({error: false});
+    const accessToken = jwt.sign(data.username, process.env.ACCESS_TOKEN_SECRET);
+    return res.cookie("G_VAR", accessToken, { maxAge: 990000000}).json({error: false});
 });
 
 io.on('connection', socket => {
