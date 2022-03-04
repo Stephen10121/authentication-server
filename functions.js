@@ -27,6 +27,7 @@ const createNewHash = () => {
 
 const sendRequest = async (website, key, cookie, getOtherWebsiteKey) => {
     const userData = await getOtherWebsiteKey(website, cookie);
+    console.log({userData, website, key, cookie});
     var clientServerOptions = {
         uri: website,
         body: JSON.stringify({data: userData, key}),

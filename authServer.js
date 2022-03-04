@@ -56,7 +56,8 @@ app.get("/auth", async (req, res) => {
 });
 
 app.post("/auth", async (req, res) => {
-    if (!req.body.userData.website || !req.body.userData.key || !req.body.userData.cookie) {
+    if (!req.body.userData) {return res.json({error: true, errorMessage: "Missing parameters"});}
+    if (!req.body.userData["website"] || !req.body.userData["key"] || !req.body.userData["cookie"]) {
         return res.json({error: true, errorMessage: "Missing parameters."});
     }
     jwt.verify(req.body.userData.cookie, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
@@ -71,12 +72,12 @@ app.post("/auth", async (req, res) => {
         if (await sendRequest(req.body.userData.website, req.body.userData.key, user, getOtherWebsiteKey)==="error") {
             return res.json({error: true, errorMessage: "Invalid URL."});
         } else {
-            try {
-                io.to(req.body.userData.key).emit('data', await getKey(req.body.userData.website, user, getOtherWebsiteKey));
-            } catch (err) {
-                console.log(err);
-                return res.json({error: true, errorMessage: "Invalid key"});
-            }
+//            try {
+//                io.to(req.body.userData.key).emit('data', await getKey(req.body.userData.website, user, getOtherWebsiteKey));
+//            } catch (err) {
+//                console.log(err);
+//                return res.json({error: true, errorMessage: "Invalid key"});
+//            }
             res.json({msg: 'good'});
         }
     });
@@ -122,6 +123,9 @@ app.post("/signup", async (req, res) => {
 
 io.on('connection', socket => {
     socket.emit("test", 200);
+    socket.on("test", (data) => {
+        console.log(data);
+    });
 });
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}.`));
