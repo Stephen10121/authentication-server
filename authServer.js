@@ -69,7 +69,7 @@ app.post("/auth", async (req, res) => {
         if (userif.length == 0) {
             return res.json({error: true, errorMessage: "Invalid token."});
         }
-        if (await sendRequest(req.body.userData.website, req.body.userData.key, user, getOtherWebsiteKey, userif[0].usersRName, userif[0].usersEmail)==="error") {
+        if (await sendRequest(req.body.userData.website, req.body.userData.key, user, getOtherWebsiteKey, userif[0].usersRName, userif[0].usersEmail, userif[0].usersName)==="error") {
             return res.json({error: true, errorMessage: "Invalid URL."});
         } else {
 //            try {

@@ -25,12 +25,12 @@ const createNewHash = () => {
     return hash;
 }
 
-const sendRequest = async (website, key, cookie, getOtherWebsiteKey, name, email) => {
+const sendRequest = async (website, key, cookie, getOtherWebsiteKey, name, email, username) => {
     const userData = await getOtherWebsiteKey(website, cookie);
     console.log({userData, website, key, cookie});
     var clientServerOptions = {
         uri: website,
-        body: JSON.stringify({data: userData, key, name, email}),
+        body: JSON.stringify({data: userData, key, name, email, username}),
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
