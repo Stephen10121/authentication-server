@@ -1,12 +1,4 @@
 @font-face {
-  font-family: "George";
-  src: url(fonts/Louis-George-Cafe.ttf);
-}
-@font-face {
-  font-family: "George-Bold";
-  src: url(fonts/Louis-George-Cafe-Bold.ttf);
-}
-@font-face {
   font-family: "George-Italic";
   src: url(fonts/Louis-George-Cafe-Italic.ttf);
 }
