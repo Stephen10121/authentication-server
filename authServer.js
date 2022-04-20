@@ -121,6 +121,11 @@ app.post("/signup", async (req, res) => {
     return res.cookie("G_VAR", accessToken, { maxAge: 990000000}).json({error: false});
 });
 
+app.post("/contact", (req, res) => {
+    console.log(req.body);
+    res.json({msg: "Message Recieved!"});
+});
+
 io.on('connection', socket => {
     socket.emit("test", 200);
     socket.on("test", (data) => {
