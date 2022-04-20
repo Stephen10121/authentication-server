@@ -35,6 +35,9 @@ const io = socketio(server, {
     }
 });
 
+app.get("/fun", (req, res) => {
+	res.render("cool");
+});
 app.get('/', (req, res) => res.render('index'));
 app.get("/auth", async (req, res) => {
     if (req.cookies["G_VAR"]) {
