@@ -10,6 +10,8 @@ const PORT = 5400;
 const app = express();
 const url = require("url");
 const jwt = require('jsonwebtoken');
+const {sendMail} = require("./mail.js");
+const { send } = require('process');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', "*");
@@ -126,6 +128,7 @@ app.post("/signup", async (req, res) => {
 
 app.post("/contact", (req, res) => {
     console.log(req.body);
+    sendMail(req.body.email, req.body.what);
     res.json({msg: "Message Recieved!"});
 });
 
