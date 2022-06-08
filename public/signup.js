@@ -14,7 +14,7 @@ document.getElementById("nouser").addEventListener("submit", (e) => {
             twofa: e.target[5].checked
         }
     } catch (error) {
-        errorMessage.innerText = "An error occured. Please refresh.";
+        errorMessage.innerText = "Missing Data. Refresh the page.";
         errorMessage.classList.remove("hide");
         return;
     }

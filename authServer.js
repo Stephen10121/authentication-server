@@ -40,7 +40,9 @@ const io = socketio(server, {
 app.get("/fun", (req, res) => {
 	res.render("cool");
 });
-app.get('/', (req, res) => res.render('index'));
+app.get('/', (_req, res) => res.render('index'));
+app.get("/signup", (_req, res) => res.render('signup'));
+
 app.get("/auth", async (req, res) => {
     if (req.cookies["G_VAR"]) {
         jwt.verify(req.cookies["G_VAR"], process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
@@ -87,8 +89,6 @@ app.post("/auth", async (req, res) => {
         }
     });
 });
-
-app.get("/signup", (req, res) => res.render('signup'));
 
 app.post("/login", async (req, res) => {
     if (!req.body.userData) {

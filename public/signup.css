@@ -99,6 +99,17 @@ button:hover {
   font-family: "George-Italic", sans-serif;
 }
 
+.soon {
+  position: relative;
+  pointer-events: none;
+}
+
+.soon::after {
+  content: " Not Done!";
+  font-weight: bold;
+  color: red;
+}
+
 @media only screen and (max-width: 500px) {
   #nouser {
     width: 100%;

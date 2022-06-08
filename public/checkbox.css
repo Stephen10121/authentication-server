@@ -20,6 +20,12 @@
   border-radius: 100vw;
 }
 
+.notNow {
+  cursor: default;
+  user-select: none;
+  pointer-events: none;
+}
+
 .checkbox:checked.checkbox::after {
   animation: boxChecked var(--checkbox-timing) forwards;
 }
