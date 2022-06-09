@@ -23,5 +23,5 @@ const popupCenter = ({postServer, key, title, w, h}) => {
 }
 
 const loginIt = () => {
-    popupCenter({postServer:"www.youtube.com/key", key: "dakey", title: 'Authenticate', w: 520, h: 570});
+    popupCenter({postServer:window.location.href, key: "dakey", title: 'Authenticate', w: 520, h: 570});
 }

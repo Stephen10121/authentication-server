@@ -2,16 +2,13 @@ require('dotenv').config();
 const http = require("http");
 const express = require('express');
 const { signup, userLogin, getUserData, getUser, getOtherWebsiteKey } = require("./database");
-const { sendRequest, getKey } = require("./functions");
+const { sendRequest } = require("./functions");
 const cookieParser = require('cookie-parser');
-const socketio = require('socket.io');
 const rateLimit = require('express-rate-limit');
 const PORT = 5400;
 const app = express();
-const url = require("url");
 const jwt = require('jsonwebtoken');
 const {sendMail} = require("./mail.js");
-const { send } = require('process');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', "*");
@@ -30,26 +27,25 @@ app.set('view engine', 'ejs');
 app.use(limiter, cookieParser(), express.json(), express.static('public'), express.urlencoded({ extended: true }));
 
 const server = http.createServer(app);
-const io = socketio(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
-    }
-});
 
-app.get("/fun", (req, res) => {
-	res.render("cool");
+app.get('/', (req, res) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress ;
+    console.log(`[server] ${ip} requested home page.`);
+    res.render('index');
 });
-app.get('/', (_req, res) => res.render('index'));
-app.get("/signup", (_req, res) => res.render('signup'));
+app.get("/signup", (req, res) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress ;
+    console.log(`[server] ${ip} requested signup page.`);
+    res.render('signup');
+});
 
 app.get("/auth", async (req, res) => {
     if (req.cookies["G_VAR"]) {
+        console.log(`[server] Verifying ${req.cookies.G_VAR}`);
         jwt.verify(req.cookies["G_VAR"], process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
             if (err) {
                 return res.clearCookie("G_VAR").render("auth");
             }
-
             const userif = await getUser(user);
             if (userif.length == 0) {
                 return res.clearCookie("key").render("auth");
@@ -76,26 +72,21 @@ app.post("/auth", async (req, res) => {
         if (userif.length == 0) {
             return res.json({error: true, errorMessage: "Invalid token."});
         }
+
         if (await sendRequest(req.body.userData.website, req.body.userData.key, user, getOtherWebsiteKey, userif[0].usersRName, userif[0].usersEmail, userif[0].usersName)==="error") {
             return res.json({error: true, errorMessage: "Invalid URL."});
         } else {
-//            try {
-//                io.to(req.body.userData.key).emit('data', await getKey(req.body.userData.website, user, getOtherWebsiteKey));
-//            } catch (err) {
-//                console.log(err);
-//                return res.json({error: true, errorMessage: "Invalid key"});
-//            }
             res.json({msg: 'good'});
         }
     });
 });
 
 app.post("/login", async (req, res) => {
-    if (!req.body.userData) {
+    if (!req.body["userData"]) {
         return res.json({error: true, errorMessage: "An error occured. Please refresh"});
     }
     const data = req.body.userData;
-    if (!data.username || !data.password) {
+    if (!data["username"] || !data["password"]) {
         return res.json({error: true, errorMessage: "Missing fields"});
     }
     const result = await userLogin(data.username, data.password);
@@ -127,16 +118,10 @@ app.post("/signup", async (req, res) => {
 });
 
 app.post("/contact", (req, res) => {
-    console.log(req.body);
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress ;
+    console.log(`[server] ${req.body.email}@${ip} sent contact form.`);
     sendMail(req.body.email, req.body.what);
     res.json({msg: "Message Recieved!"});
 });
 
-io.on('connection', socket => {
-    socket.emit("test", 200);
-    socket.on("test", (data) => {
-        console.log(data);
-    });
-});
-
-server.listen(PORT, () => console.log(`Server running on port ${PORT}.`));
+server.listen(PORT, () => console.log(`[server] Running on port ${PORT}.`));
