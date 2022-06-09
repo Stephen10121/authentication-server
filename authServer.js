@@ -107,7 +107,6 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-    return res.json({error: false});
     if (!req.body.userData) {
         return res.json({error: true, errorMessage: "An error occured. Please refresh"});
     }
