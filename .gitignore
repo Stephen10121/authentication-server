@@ -3,4 +3,4 @@ package-lock.json
 users.db
 /testserver
 .env
-mail.js
+testmail.js
