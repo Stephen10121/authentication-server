@@ -32,10 +32,8 @@ document.getElementById("nouser").addEventListener("submit", (e) => {
             errorMessage.classList.remove("hide");
             return;
         }
-        setTimeout(() => {
-            window.location.href = "/";
-        }, 10000);
-        gerrorMessage.innerText = "Success. Redirecting in 10 seconds.";
+        setTimeout(successMessage, 500);
+        gerrorMessage.innerText = "Success.";
         gerrorMessage.classList.remove("hide");
       })
       .catch(function (error) {
@@ -45,3 +43,16 @@ document.getElementById("nouser").addEventListener("submit", (e) => {
         return;
     });
 });
+
+
+const successMessage = () => {
+    const form = document.querySelector("form");
+    form.classList.add("successAnimation");
+}
+
+const clickSuccess = () => {
+    if (!document.querySelector("form").classList.contains("successAnimation")) {
+        return;
+    }
+    window.location.href = "/";
+}
